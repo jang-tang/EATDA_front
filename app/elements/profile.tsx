@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Sub_Top from '../elements/sub_TopBar';
@@ -33,7 +34,7 @@ export default function Profile() {
         />
 
         {/* 회원 탈퇴하기 */}
-        <TouchableOpacity activeOpacity={0.9}>
+        <TouchableOpacity activeOpacity={0.9} onPress={()=> {AsyncStorage.clear(); console.log(1)}}>
           <Text style={styles.withdrawText}>회원 탈퇴하기</Text>
         </TouchableOpacity>
       </View>

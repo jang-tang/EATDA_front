@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
     <key>CADisableMinimumFrameDurationOnPhone</key>
@@ -22,12 +20,17 @@
     <string>1.0.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
+
+    <!-- ✅ Google Maps API Key 추가 -->
+    <key>GMSApiKey</key>
+    <string>AIzaSyD0N73wnCzJrBKM3znWr2u7vahbP1h25vo</string>
+
     <key>CFBundleURLTypes</key>
     <array>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>eatda</string>
+          <string>com.jangtang.eatda</string>
           <string>com.jangtang.eatda</string>
         </array>
       </dict>
@@ -40,6 +43,8 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>

@@ -5,12 +5,15 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "eatda",
+    "scheme": "com.jangtang.eatda",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jangtang.eatda"
+      "bundleIdentifier": "com.jangtang.eatda",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -20,6 +23,9 @@
       "edgeToEdgeEnabled": true,
       "package": "com.jangtang.eatda",
       "config": {
+        "googleSignIn": {
+          "certificateHash": "41:35:52:43:06:BB:19:F2:99:72:32:95:F3:7D:3A:A9:6D:1C:11:2D"
+        },
         "googleMaps": {
           "apiKey": "AIzaSyD0N73wnCzJrBKM3znWr2u7vahbP1h25vo"
         }
@@ -30,6 +36,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ],
+            "newArchEnable": true
+          },
+          "ios": {
+            "newArchEnable": true
+          }
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
