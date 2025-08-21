@@ -8,11 +8,13 @@ export default function Index() {
     const redirect = async () => {
       // 앱 시작 시 세션 확인
       const { data: { session } } = await supabase.auth.getSession()
-      console.log(session)
+      console.log("앱 시작 시 세션 확인 : ", session)
       if (session) {
         router.replace('/(tabs)/home')
+        console.log("세션 확인됨. 홈으로")
       } else {
         router.replace('/auth/login')
+        console.log("세션 확인 안됨.")
       }
     }
 
@@ -35,3 +37,4 @@ export default function Index() {
     </View>
   );
 }
+

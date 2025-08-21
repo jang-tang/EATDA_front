@@ -5,8 +5,10 @@ import * as Google from 'expo-auth-session/providers/google'; // 구글 로그�
 import * as WebBrowser from 'expo-web-browser'; // 외부 브라우저 열기
 import React from 'react';
 import { Alert, Dimensions, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { API_BASE_URL } from '../../config';
 
 // Supabase 클라이언트 import
+import { router } from 'expo-router';
 import supabase from '../auth/supabase';
 
 // Expo 웹 브라우저에서 OAuth 세션을 마무리하기 위한 함수
@@ -52,11 +54,18 @@ export default function Login() {
     if (error) {
       Alert.alert('로그인 실패', error.message);
     } else {
-      console.log('구글 로그인 성공', data);
-      Alert.alert('로그인 성공!', `환영합니다 ${data.user?.email}`);
+      console.log('구글 로그인 성공 : ', data);
+      const { data: sessionData } = await supabase.auth.getSession();
+      console.log('현재 세션:', sessionData?.session);
+      if (sessionData) {
+      router.replace('/(tabs)/home')
+      }
+      let UUID = String(sessionData.session?.user.id)
+      let name = String(sessionData.session?.user.user_metadata.name)
+      let url = String(sessionData.session?.user.user_metadata.avatar_url)
+      sendPost(UUID, name, url);
+       // 안전하게 string으로 보장됨
     }
-    const { data: sessionData } = await supabase.auth.getSession();
-    console.log('현재 세션:', sessionData?.session);
   };
 
   
@@ -80,7 +89,6 @@ export default function Login() {
   
       // 카카오 로그인 브라우저 열기
       const result = await WebBrowser.openAuthSessionAsync(data?.url ?? '', redirectUri);
-      console.log('카카오 로그인 결과:', result);
   
       if (result.type === 'success' && result.url) {
         // 👉 URL fragment 파싱
@@ -102,17 +110,46 @@ export default function Login() {
             return;
           }
   
-          console.log('현재 세션:', sessionData?.session);
-          Alert.alert('로그인 성공', `환영합니다 ${sessionData?.session?.user?.email ?? ''}`);
+          if (sessionData) {
+            console.log('카카오 로그인 성공');
+            console.log('현재 세션:', sessionData?.session);
+            router.replace('/(tabs)/home')
+            let UUID = String(sessionData.session?.user.id)
+            let name = String(sessionData.session?.user.user_metadata.name)
+            let url = String(sessionData.session?.user.user_metadata.avatar_url)
+            sendPost(UUID, name, url);
+            
+          
+          }
         } else {
           Alert.alert('로그인 실패', '토큰을 가져올 수 없습니다.');
         }
-      } else {
-        Alert.alert('로그인 취소', '사용자가 로그인 과정을 취소했습니다.');
       }
     } catch (err: any) {
       console.error('Kakao 로그인 오류', err);
       Alert.alert('로그인 실패', err.message || '알 수 없는 오류');
+    }
+  }
+
+  async function sendPost(UUID: string, name : string, picture_url: string) {
+    console.log(API_BASE_URL)
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uuid: UUID,
+          name : name,
+          picture_url: picture_url
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("서버 응답:", data);
+    } catch (error) {
+      console.error("에러 발생:", error);
     }
   }
   
