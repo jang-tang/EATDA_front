@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { API_BASE_URL } from '@/config';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import Top from '../elements/Topbar';
@@ -6,7 +7,25 @@ import Map_store from './map_element/map_store';
 
 const { width, height } = Dimensions.get('window');
 
+async function Get_stores() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stores`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
 export default function Map() {
+  const [stores, setStores] = useState<any[]>([]); // ✅ 서버에서 불러온 가게 목록
   const [showStoreBox, setshowStoreBox] = useState<number>(-1);
   const [region, setRegion] = useState<Region>({
     latitude: 37.37368,
@@ -14,6 +33,23 @@ export default function Map() {
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
+
+  //박스 띄울 가게 정보
+  const [boxImage, setBoxImage] = useState('');
+  const [boxTitle, setBoxTitle] = useState('');
+  const [boxLocation, setBoxLocation] = useState(' ');
+  const [boxTel, setBoxTel] = useState(' ');
+
+  useEffect(()=>{
+    const fetchStores = async ()=>{
+      const data = await Get_stores(); // ✅ 기다린 후
+      if (data){
+        setStores(data)
+      }; 
+    }
+    fetchStores()
+  },[])
+  
 
   return (
     <>
@@ -25,22 +61,29 @@ export default function Map() {
           region={region}
           onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
         >
-          <Marker
-            coordinate={{ latitude: 37.37368, longitude: 126.7956 }}
-            title="시흥가온중학교"
-            description="시흥가온중학교 위치"
-            onPress={() => setshowStoreBox(-showStoreBox)}
-          />
+          {stores.map((store) => (<Marker
+            key={store.store_id}
+            coordinate={{ latitude: Number(store.latitude), longitude: Number(store.longitude) }}
+            title={store.store_name}
+            description={`${store.store_name} 위치`}
+            onPress={() => {
+              setshowStoreBox(1);
+              setBoxImage(store.image_url);
+              setBoxLocation(store.road_address);
+              setBoxTel(store.phone_number);
+              setBoxTitle(store.store_name)
+            }}
+          />))}
         </MapView>
 
         {/* 맵 위에 겹쳐서 뜨도록 절대 위치 지정 */}
         <View style={styles.mol}>
         <View style={styles.storeBoxWrapper}>
           {showStoreBox === 1 && (<Map_store
-            image={require('../../assets/images/bakery.png')}
-            title={'솔빛 베이커리'}
-            location={'안산시 단원구 사세충열로 94'}
-            tel={'Tel)031-363-7800'}
+            image={boxImage}
+            title={boxTitle}
+            location={boxLocation}
+            tel={boxTel}
           />)}
         </View>
         </View>

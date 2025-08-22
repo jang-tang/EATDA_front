@@ -1,4 +1,5 @@
-import React from 'react';
+import { API_BASE_URL } from '@/config';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -11,8 +12,34 @@ import Top from '../elements/Topbar';
 import Star_store from './start_element/star_store';
 
 const { width, height } = Dimensions.get('window');
+async function Get_stores() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stores`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
 
 export default function Star() {
+  const [stores, setStores] = useState<any[]>([]); // ✅ 서버에서 불러온 가게 목록
+  useEffect(()=>{
+    const fetchStores = async ()=>{
+      const data = await Get_stores(); // ✅ 기다린 후
+      if (data){
+        setStores(data)
+      }; 
+    }
+    fetchStores()
+  },[])
   return (
     <>
       <Top/>
@@ -25,38 +52,16 @@ export default function Star() {
             <Entypo name="list" size={20} style={styles.icon} />
           </View>
         </View>
-        {/*매장들*/}
-        <Star_store 
-          image={require('../../assets/images/한울 식자재 마트 프로필 사진.png')}
-          title={'한울 식자재 마트'}
-          location='안산시 단원구 사세충열로 94'
-          tel='Tel) 031-363-7800' 
+        {stores.map((store)=>(
+          <Star_store 
+          key={store.store_id}
+          image={store.image_url}
+          title={store.store_name}
+          location={store.road_address}
+          tel={`Tel) ${store.phone_number}`} 
           sale={50}          
         />
-        <View style={styles.divider_half}></View>
-        <Star_store 
-          image={require('../../assets/images/bakery.png')} 
-          title={'솔빛 베이커리'} 
-          location='안산시 단원구 사세충열로 94' 
-          tel='Tel) 031-363-7800'
-          sale={40}  
-        />
-        <View style={styles.divider_half}></View>
-        <Star_store 
-          image={require('../../assets/images/별미네 반찬가게 프로필 사진.png')} 
-          title={'별미네 반찬가게'} 
-          location='안산시 단원구 사세충열로 94' 
-          tel='Tel) 031-363-7800'
-          sale={60}  
-        />
-        <View style={styles.divider_half}></View>
-        <Star_store 
-          image={require('../../assets/images/마루푸드 마켓 프로필 사진.png')} 
-          title={'마루푸드 마켓'} 
-          location='안산시 단원구 사세충열로 94' 
-          tel='Tel) 031-363-7800'
-          sale={30}  
-        />
+        ))}
       </ScrollView>
     </>
   );

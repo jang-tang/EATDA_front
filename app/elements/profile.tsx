@@ -1,7 +1,7 @@
 import { API_BASE_URL, AuthProvider } from '@/config';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Sub_Top from '../elements/sub_TopBar';
 
@@ -27,21 +27,21 @@ async function Get_user_info(user_id: string) {
   }
 }
 
-const fetchUser = async () => {
-  const user_id = await AuthProvider();
-  console.log("프로필 페이지 유저 아이디 받음", user_id);
-  let info = await Get_user_info(user_id)
-  nickname = info[0]
-  profile_url = info[1]
-};
-
-let user_id: any;
-let nickname: any;
-let profile_url: any;
 
 export default function Profile() {
+  const [nickname, setNickname] = useState<string>('');
+  const [profile_url, setProfileUrl] = useState<string>(' ');
+
   useEffect(() => {
-    fetchUser(); // ✅ 함수를 실제로 호출
+    const fetchUser = async () => {
+      const userID = await AuthProvider();
+
+      const info = await Get_user_info(userID);
+      setNickname(info[0]);
+      setProfileUrl(info[1]);
+    };
+
+    fetchUser();
   }, []);
   return (
     <>

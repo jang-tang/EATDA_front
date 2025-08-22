@@ -7,12 +7,43 @@ import {
   View
 } from 'react-native';
 
+import { API_BASE_URL } from '@/config';
+import { useEffect, useState } from 'react';
 import Ad_screen from '../elements/Ad_screen';
 import Top from '../elements/Topbar';
 import ProductBox from '../elements/goods';
 const { width } = Dimensions.get('window');
 
+async function Get_product() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stores`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
 export default function Home(){
+  const [product, setProduct] = useState<any[]>([]); // ✅ 서버에서 불러온 가게 목록
+  useEffect(()=>{
+    const fetchStores = async ()=>{
+      const data = await Get_product(); // ✅ 기다린 후
+      if (data){
+        setProduct(data)
+      }; 
+    }
+    fetchStores()
+  },[])
+  //제품 가져와서 나열할 차례
+  
   return (
     <>
     <SafeAreaView style={styles.safeArea}>
