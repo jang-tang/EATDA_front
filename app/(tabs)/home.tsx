@@ -16,7 +16,7 @@ const { width } = Dimensions.get('window');
 
 async function Get_product() {
   try {
-    const response = await fetch(`${API_BASE_URL}/stores`, {
+    const response = await fetch(`${API_BASE_URL}/products`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -40,6 +40,7 @@ export default function Home(){
         setProduct(data)
       }; 
     }
+    console.log(product)
     fetchStores()
   },[])
   //제품 가져와서 나열할 차례
@@ -50,13 +51,12 @@ export default function Home(){
       <Top />
       <ScrollView style={styles.scrollContainer} contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
         <Ad_screen/>
-        <ProductBox image={require('../../assets/images/bread.png')} title={'식빵'} price={4500} sale={2700} description={'보관기간 1일'} />
-        <View style={styles.divider}/>
-        <ProductBox image={require('../../assets/images/blueberry.png')} title={'블루베리'} price={5800} sale={4350} description={'보관기간 2일'} />
-        <View style={styles.divider} />
-        <ProductBox image={require('../../assets/images/onion.png')} title={'양파'} price={1580} sale={1100} description={'보관기간 5일'} />
-        <View style={styles.divider}/>
-        <ProductBox image={require('../../assets/images/bread.png')} title={'식빵'} price={4500} sale={2700} description={'보관기간 1일'} />
+        {product.map((product, index)=>(
+          <View key={product.product_id}>
+            {index !== 0 && <View style={styles.divider} />}
+            <ProductBox key={product.product_id} image={product.image_url} title={product.title} price={product.original_price} sale={product.discount_price} description={product.description} hashtags={product.hashtags} extra_info={product.extra_info} product_id={product.product_id} store_id={product.store_id} />
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
     </>

@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
   image: {
     width: 110,
     height: 110,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    borderRadius: 10,
     marginVertical: 10,
   },
   textContainer: {

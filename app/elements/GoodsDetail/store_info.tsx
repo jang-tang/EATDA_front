@@ -1,5 +1,6 @@
+import { API_BASE_URL } from "@/config";
 import { router } from "expo-router"; // 화면 전환을 위한 라우터
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions, // 기기 화면 크기 가져오기
   Image, // 이미지 컴포넌트
@@ -21,7 +22,45 @@ const originalHeight = 300;
 const scaleFactor = width / originalWidth;
 const scaledHeight = originalHeight * scaleFactor;
 
-export default function Store_intro() {
+interface StoreBoxProps {
+  store_id:number;
+  store_name:string;
+  latitude:number;
+  longitude:number;
+  image_url:string  ;
+}
+
+async function Get_maxSale(store_id : number) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stores/get_maxSale`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "store_id": store_id,
+      }),
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
+export default function Store_intro({store_id, store_name, latitude, longitude, image_url} : StoreBoxProps) {
+  const [maxSale, setmaxSale] = useState<number>(0); // ✅ 서버에서 불러온 가게 목록
+    useEffect(()=>{
+      const fetchStores = async ()=>{
+        const data = await Get_maxSale(Number(store_id)); // ✅ 기다린 후
+        if (data){
+          setmaxSale(data)
+        }; 
+      }
+      fetchStores()
+    },[])
     return (
         <View style={styles.store_info}>
           
@@ -30,12 +69,12 @@ export default function Store_intro() {
             {/* 가게 대표 이미지 */}
             <Image 
               style={styles.store_img} 
-              source={require('../../../assets/images/bakery.png')} 
+              source={{uri:image_url}} 
             />
             {/* 가게 이름과 할인 정보 */}
             <View style={styles.txt_box}>
-              <Text style={styles.txt_head}>솔빛 베이커리</Text>
-              <Text style={styles.txt_sub}>최대 50% off</Text>
+              <Text style={styles.txt_head}>{store_name}</Text>
+              <Text style={styles.txt_sub}>최대 {maxSale}% off</Text>
             </View>
           </View>
 

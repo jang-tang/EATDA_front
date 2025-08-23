@@ -8,29 +8,42 @@ import {
 } from "react-native";
 import Entypo from "react-native-vector-icons/Entypo";
 
-export default function Detail_txt(){
-    const txt = `남은 단팥빵을 당일 판매 원칙에 따라 40% 할인 판매합니다. 달콤한 팥과 부드러운 식감이 어우러진 정성 가득한 단팥빵, 오늘 간식이나 커피와 함께 가볍게 즐겨보세요!`
+interface ProductBoxProps {
+    product_id:string;
+    image: string;         // 이미지 소스 (require or uri)
+    title: string;       // 상품명
+    description?: string; // 간단한 설명 (옵션)
+    sale: string;
+    price: string;       // 가격 표시 (문자열로 처리)
+    hashtags: string;
+    extra_info:string;
+    store_id:string;
+  }
+
+export default function Detail_txt({ image, title, description, price, sale, hashtags, extra_info, product_id, store_id }: ProductBoxProps){
+    let hashs = hashtags.replace(/^#/, '').split('#')
     return(
         <View style={styles.container}>
             {/* 해시태그 */}
             <View style={styles.hash_con}>
-            <Text style={styles.hashtag}> #근처 5KM 이내</Text>
-            <Text style={styles.hashtag}>#보관 기관 3일 이내</Text>
+            {hashs.map((hashtag, index)=>(
+                 <Text key={index} style={styles.hashtag}>#{hashtag}</Text>
+            ))}
             </View>
             {/* 제품 이름과 보관기간 */}
              <View style={styles.head_con}>
-             <Text style={styles.head}>단팥빵</Text>
-             <Text style={styles.haveday}>보관기간:{1}일</Text>
+             <Text style={styles.head}>{title}</Text>
+             <Text style={styles.haveday}>{description}</Text>
             </View>
             {/* 할인율 */}
-            <Text style={styles.sale}>{40}% off</Text>
+            <Text style={styles.sale}>{Math.floor((1 - Number(sale) / Number(price))* 100)}% off</Text>
             {/* 가격 */}
             <View style={styles.head_con}>
-             <Text style={styles.sale_price}>{1200}원</Text>
-             <Text style={styles.bone_price}>{2000}원</Text>
+             <Text style={styles.sale_price}>{sale}원</Text>
+             <Text style={styles.bone_price}>{price}원</Text>
             </View>
             {/* 세부 설명 */}
-            <Text style={styles.input}>{txt}</Text>
+            <Text style={styles.input}>{extra_info}</Text>
             <View>
             {/* 리뷰 */}
             <TouchableOpacity  style={styles.hash_con} onPress={()=>{router.push('/elements/reivew/review')}}

@@ -49,8 +49,7 @@ const styles = StyleSheet.create({
   image: {
     width: 115,
     height: '100%',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    borderRadius: 10,
     marginVertical: 0,
     marginRight: 0
   },
