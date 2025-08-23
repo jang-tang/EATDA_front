@@ -84,7 +84,15 @@ export default function Store_intro({store_id, store_name, latitude, longitude, 
           <TouchableOpacity 
             style={styles.txt_map} 
             activeOpacity={0.9} // 눌렀을 때 살짝 투명해짐
-            onPress={() => { router.push('/map')}} // 지도 페이지로 이동
+            onPress={() => {
+              router.push({
+                pathname: '/map',
+                params: {
+                  latitude: latitude,
+                  longitude: longitude,
+                },
+              });
+            }}// 지도 페이지로 이동
           >
             <Text>지도로 보기</Text>
             {/* 오른쪽 화살표 아이콘 */}

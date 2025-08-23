@@ -24,13 +24,13 @@ export default function TabsLayout() {
         screenOptions={({ route }) => {
           let iconName: IoniconName;
           switch (route.name) {
-            case 'home':
+            case '홈':
               iconName = 'home-outline';
               break;
-            case 'map':
+            case '지도':
               iconName = 'map-outline';
               break;
-            case 'star':
+            case '즐겨찾기':
               iconName = 'star-outline';
               break;
             default:
@@ -47,9 +47,9 @@ export default function TabsLayout() {
           };
         }}
       >
-        <Tab.Screen name="home" component={Home} />
-        <Tab.Screen name="map" component={Map} />
-        <Tab.Screen name="star" component={Star} />
+        <Tab.Screen name="home" component={Home} options={{ title: '홈' }} />
+        <Tab.Screen name="map" component={Map} options={{ title: '지도' }} />
+        <Tab.Screen name="star" component={Star} options={{ title: '즐겨찾기' }} />
       </Tab.Navigator>
     </ThemeProvider>
   );

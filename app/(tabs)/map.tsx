@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '@/config';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import Top from '../elements/Topbar';
@@ -25,12 +26,26 @@ async function Get_stores() {
 }
 
 export default function Map() {
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        latitude = undefined;
+        longitude = undefined;
+        setRegion({
+          latitude: latitude ? Number(latitude) : 37.37368,
+          longitude: longitude ? Number(longitude) : 126.7956,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        })
+      };
+    }, [])
+  );
   const [stores, setStores] = useState<any[]>([]); // ✅ 서버에서 불러온 가게 목록
   const [showStoreBox, setshowStoreBox] = useState<number>(-1);
-  //const {latitude, longitude} = useLocalSearchParams<{ latitude?: string; longitude?: string;}>();
+  let {latitude, longitude} = useLocalSearchParams<{ latitude?: string; longitude?: string;}>();
   const [region, setRegion] = useState<Region>({
-    latitude: 37.37368,
-    longitude: 126.7956,
+    latitude: latitude ? Number(latitude) : 37.37368,
+    longitude: longitude ? Number(longitude) : 126.7956,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
@@ -43,7 +58,6 @@ export default function Map() {
   const [boxId, setBoxId] = useState<number>(0);
 
   useEffect(()=>{
-    
     const fetchStores = async ()=>{
       const data = await Get_stores(); // ✅ 기다린 후
       if (data){
