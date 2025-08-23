@@ -12,6 +12,38 @@ import Top from '../elements/Topbar';
 import Star_store from './start_element/star_store';
 
 const { width, height } = Dimensions.get('window');
+async function get_maxSale(store_id : number) {
+  let [maxSale, setMaxSale] = useState(0);
+  useEffect(()=>{
+    const fetchStores = async ()=>{
+      const data = await get_maxSale(store_id); // ✅ 기다린 후
+      if (data){
+        setMaxSale(data)
+      }else if(data == 0){
+        setMaxSale(data)
+      }; 
+    }
+    fetchStores()
+  },[])
+  try {
+    const response = await fetch(`${API_BASE_URL}/stores/get_maxSale`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "store_id": store_id
+      }),
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
 async function Get_stores() {
   try {
     const response = await fetch(`${API_BASE_URL}/stores`, {
@@ -55,11 +87,14 @@ export default function Star() {
         {stores.map((store)=>(
           <Star_store 
           key={store.store_id}
-          image={store.image_url}
-          title={store.store_name}
-          location={store.road_address}
-          tel={`Tel) ${store.phone_number}`} 
-          sale={50}          
+          store_id={store.store_id} 
+          store_name={store.store_name} 
+          latitude={store.latitude} 
+          longitude={store.longitude} 
+          image_url={store.image_url} 
+          road_address={store.road_address} 
+          phone_number={store.phone_number}
+          maxSale={store.mx}                
         />
         ))}
       </ScrollView>

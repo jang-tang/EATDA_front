@@ -1,23 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function Score() {
-  const ratings = [
-    { score: 5, count: 170 },
-    { score: 4, count: 60 },
-    { score: 3, count: 30 },
-    { score: 2, count: 20 },
-    { score: 1, count: 6 },
-  ];
+interface ScoreProps {
+  rating: number[]; // 1~5의 평점이 들어있는 배열
+}
 
-  const totalCount = ratings.reduce((sum, r) => sum + r.count, 0);
+interface Ratings {
+  ratingAndCount: {
+    score: number;
+    count: number;
+  }
+}
+
+export default function Score({ rating }: ScoreProps) {
+  const [ratings, setRatings] = useState<Ratings[]>([]);
+const [totalCount, setTotalCount] = useState<number>(0);
+const [averageRating, setAverageRating] = useState<number>(0);
+
+useEffect(() => {
+  // 1~5 점 카운트 계산
+  const computedRatings: Ratings[] = [1, 2, 3, 4, 5].map((score) => ({
+    ratingAndCount: {
+      score,
+      count: rating.filter((r) => r === score).length,
+    },
+  })).reverse(); // UI상 5점이 위로 오게
+
+  setRatings(computedRatings);
+
+  // totalCount 계산
+  const total = computedRatings.reduce((sum, r) => sum + r.ratingAndCount.count, 0);
+  setTotalCount(total);
 
   // 평균 평점 계산
-  const averageRating =
-    totalCount > 0
-      ? ratings.reduce((sum, r) => sum + r.score * r.count, 0) / totalCount
+  const average =
+    total > 0
+      ? computedRatings.reduce((sum, r) => sum + r.ratingAndCount.score * r.ratingAndCount.count, 0) / total
       : 0;
+  setAverageRating(average);
+  
+
+}, [rating]);
+
+  
 
   return (
     <View style={styles.container}>
@@ -26,7 +52,7 @@ export default function Score() {
         <Text style={styles.average}>{averageRating.toFixed(1)}</Text>
         <View style={styles.stars}>
           {[1, 2, 3, 4, 5].map((i) => {
-            const fill = Math.min(Math.max(averageRating - (i - 1), 0), 1); // 0~1
+            const fill = Math.min(Math.max(averageRating - (i - 1), 0), 1);
             return (
               <View key={i} style={styles.starWrapper}>
                 <Ionicons name="star" size={15} color="#D3D3D4" />
@@ -47,10 +73,10 @@ export default function Score() {
       {/* 오른쪽 영역: 평점별 막대 */}
       <View style={styles.right}>
         {ratings.map((r) => {
-          const widthPercent = totalCount ? (r.count / totalCount) * 100 : 0;
+          const widthPercent = totalCount ? (r.ratingAndCount.count / totalCount) * 100 : 0;
           return (
-            <View key={r.score} style={styles.row}>
-              <Text style={styles.scoreText}>{r.score}점</Text>
+            <View key={r.ratingAndCount.score} style={styles.row}>
+              <Text style={styles.scoreText}>{r.ratingAndCount.score}점</Text>
               <View style={styles.barContainer}>
                 <View style={styles.barBackground} />
                 <View
@@ -58,15 +84,9 @@ export default function Score() {
                     styles.barFill,
                     { width: `${widthPercent}%` },
                   ]}
-                  onLayout={(e) => {
-                    const w = e.nativeEvent.layout.width;
-                    e.target.setNativeProps({
-                      style: { borderRadius: Math.min(6, w / 2) },
-                    });
-                  }}
                 />
               </View>
-              <Text style={styles.countText}>{r.count}</Text>
+              <Text style={styles.countText}>{r.ratingAndCount.count}</Text>
             </View>
           );
         })}
@@ -111,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 3,
-    justifyContent: "space-between", // ← 추가: 막대와 텍스트 사이 공간 확보
+    justifyContent: "space-between",
   },
   scoreText: {
     width: 30,
@@ -136,6 +156,6 @@ const styles = StyleSheet.create({
   countText: {
     width: 30,
     fontSize: 12,
-    textAlign: "left", // ← 오른쪽 정렬
+    textAlign: "left",
   },
 });

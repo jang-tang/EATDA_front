@@ -46,7 +46,10 @@ export default function Detail_txt({ image, title, description, price, sale, has
             <Text style={styles.input}>{extra_info}</Text>
             <View>
             {/* 리뷰 */}
-            <TouchableOpacity  style={styles.hash_con} onPress={()=>{router.push('/elements/reivew/review')}}
+            <TouchableOpacity  style={styles.hash_con} onPress={()=>{router.push({
+                pathname: '/elements/reivew/review',
+                params: { product_id }   // ✅ product_id 같이 넘기기
+            })}}
             activeOpacity={0.9}>
             <Text style={styles.review}>리뷰 보기 {91}개</Text>
             {/* 오른쪽 화살표 아이콘 */}

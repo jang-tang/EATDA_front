@@ -1,17 +1,65 @@
-import React from "react";
+import { API_BASE_URL } from "@/config";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function R_component() {
-  const nickname = "jang-tang";
-  const rating = 4.3; // 여기서 별점 숫자 변경 가능
-  const date = "25.08.25";
-  const reviewText = "한 입 먹자마자 눈물이 핑 돌았어요.  치즈는 늘어지고 빵은 구름처럼 부드럽고, 야채는 방금 정원에서 따온 듯 신선했어요.이건 그냥 샌드위치가 아니라… 행복입니다.";
+interface ReviewBox {
+  review_id:number,
+  user_id:number, 
+  product_id:number, 
+  rating:number,    
+  created_at: string,
+  image_url: string,
+  content:string
+}
+async function Get_username(user_id : number) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/get_name`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "user_id": user_id,
+      }),
+    });
 
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
+// 날짜 포맷 함수
+function formatDate(isoString: string): string {
+  const date = new Date(isoString);
+  const year = date.getFullYear().toString().slice(2); // 뒤 2자리
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
+}
+
+export default function R_component({review_id,user_id,product_id,rating,created_at,image_url,content}:ReviewBox) {
+  let [username, setUsername] = useState<string>('')
+  let [date, setDate] = useState<string>('');
+
+  useEffect(()=>{
+    const fetchStores = async ()=>{
+      const data = await Get_username(Number(user_id)); // ✅ 기다린 후
+      if (data){
+        setUsername(data)
+      }; 
+    }
+    fetchStores()
+    let D = formatDate(created_at)
+    setDate(D);
+  },[])
   return (
     <View style={styles.container}>
       {/* 닉네임 */}
-      <Text style={styles.nickname}>{nickname}</Text>
+      <Text style={styles.nickname}>{username}</Text>
 
       {/* 별 + 날짜 */}
       <View style={styles.starRow}>
@@ -32,10 +80,10 @@ export default function R_component() {
       </View>
 
       {/* 이미지 */}
-      <Image source={require('../../../assets/images/sandwich.png')} style={styles.image} />
+      <Image source={{uri:image_url}} style={styles.image} />
 
       {/* 리뷰 텍스트 */}
-      <Text style={styles.reviewText}>{reviewText}</Text>
+      <Text style={styles.reviewText}>{content}</Text>
     </View>
   );
 }

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/config";
+import { useNavigation } from '@react-navigation/native';
 import { router } from "expo-router"; // 화면 전환을 위한 라우터
 import React, { useEffect, useState } from "react";
 import {
@@ -51,6 +52,7 @@ async function Get_maxSale(store_id : number) {
 }
 
 export default function Store_intro({store_id, store_name, latitude, longitude, image_url} : StoreBoxProps) {
+  const navigation = useNavigation();
   const [maxSale, setmaxSale] = useState<number>(0); // ✅ 서버에서 불러온 가게 목록
     useEffect(()=>{
       const fetchStores = async ()=>{
@@ -82,7 +84,7 @@ export default function Store_intro({store_id, store_name, latitude, longitude, 
           <TouchableOpacity 
             style={styles.txt_map} 
             activeOpacity={0.9} // 눌렀을 때 살짝 투명해짐
-            onPress={() => { router.push('/map'); }} // 지도 페이지로 이동
+            onPress={() => { router.push('/map')}} // 지도 페이지로 이동
           >
             <Text>지도로 보기</Text>
             {/* 오른쪽 화살표 아이콘 */}

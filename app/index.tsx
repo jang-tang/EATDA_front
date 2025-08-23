@@ -10,7 +10,7 @@ export default function Index() {
       const { data: { session } } = await supabase.auth.getSession()
       console.log("앱 시작 시 세션 확인 : ", session)
       if (session) {
-        router.replace('/(tabs)/home')
+        router.replace('/home')
         console.log("세션 확인됨. 홈으로")
       } else {
         router.replace('/auth/login')
@@ -21,7 +21,7 @@ export default function Index() {
     // 세션 변화 감지
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        router.replace('/(tabs)/home')
+        router.replace('/home')
       } else {
         router.replace('/auth/login')
       }

@@ -5,22 +5,35 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 const { width, height } = Dimensions.get('window');
 
 interface StoreBoxProps {
-    image: any;          // 이미지 소스 (require or uri)
-    title: string;       // 상품명
-    tel: string; // 간단한 설명 (옵션)
-    location: string;     // 가격 표시 (문자열로 처리)
-    sale: number;
+  store_id:number
+  store_name:string
+  latitude:number   
+  longitude:number
+  image_url:string
+  road_address:string
+  phone_number:string
+  maxSale:number
   }
 
-export default function Star_storeProductBox({ image, title, location, tel, sale }: StoreBoxProps) {
+export default function Star_storeProductBox({ store_id, store_name,latitude,longitude,image_url,road_address,phone_number,maxSale }: StoreBoxProps) {
   return (
-      <TouchableOpacity style={styles.container} activeOpacity={0.9} onPress={()=> router.push('/elements/store_page')}>
-      <Image source={{uri:image}} style={styles.image} resizeMode="cover" />
+      <TouchableOpacity style={styles.container} activeOpacity={0.9} onPress={()=> {
+        router.push({
+        pathname: '/elements/store_page',
+        params: {
+          store_id: store_id,
+          image: image_url,
+          title: store_name,
+          location: road_address,
+          tel: phone_number
+        }
+      });}}>
+      <Image source={{uri:image_url}} style={styles.image} resizeMode="cover" />
       <View style={styles.textContainer}>
-        <Text style={styles.sale} numberOfLines={1} ellipsizeMode="tail">최대 {sale}% 할일</Text>
-        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
-        <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{location}</Text>
-        <Text style={styles.tel} numberOfLines={1} ellipsizeMode="tail">{tel}</Text>
+        <Text style={styles.sale} numberOfLines={1} ellipsizeMode="tail">최대 {maxSale}% 할일</Text>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{store_name}</Text>
+        <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{road_address}</Text>
+        <Text style={styles.tel} numberOfLines={1} ellipsizeMode="tail">{`tel) ${phone_number}`}</Text>
       </View>
     </TouchableOpacity>
   );

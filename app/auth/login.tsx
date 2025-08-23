@@ -113,7 +113,7 @@ export default function Login() {
           if (sessionData) {
             console.log('카카오 로그인 성공');
             console.log('현재 세션:', sessionData?.session);
-            router.replace('/(tabs)/home')
+            router.replace('/home')
             let UUID = String(sessionData.session?.user.id)
             let name = String(sessionData.session?.user.user_metadata.name)
             let url = String(sessionData.session?.user.user_metadata.avatar_url)

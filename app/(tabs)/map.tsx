@@ -27,6 +27,7 @@ async function Get_stores() {
 export default function Map() {
   const [stores, setStores] = useState<any[]>([]); // ✅ 서버에서 불러온 가게 목록
   const [showStoreBox, setshowStoreBox] = useState<number>(-1);
+  //const {latitude, longitude} = useLocalSearchParams<{ latitude?: string; longitude?: string;}>();
   const [region, setRegion] = useState<Region>({
     latitude: 37.37368,
     longitude: 126.7956,
@@ -39,8 +40,10 @@ export default function Map() {
   const [boxTitle, setBoxTitle] = useState('');
   const [boxLocation, setBoxLocation] = useState(' ');
   const [boxTel, setBoxTel] = useState(' ');
+  const [boxId, setBoxId] = useState<number>(0);
 
   useEffect(()=>{
+    
     const fetchStores = async ()=>{
       const data = await Get_stores(); // ✅ 기다린 후
       if (data){
@@ -72,6 +75,7 @@ export default function Map() {
               setBoxLocation(store.road_address);
               setBoxTel(store.phone_number);
               setBoxTitle(store.store_name)
+              setBoxId(store.store_id)
             }}
           />))}
         </MapView>
@@ -84,6 +88,7 @@ export default function Map() {
             title={boxTitle}
             location={boxLocation}
             tel={boxTel}
+            store_id = {boxId}
           />)}
         </View>
         </View>
