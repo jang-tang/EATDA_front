@@ -1,6 +1,6 @@
 import supabase from './app/auth/supabase';
 
-export const API_BASE_URL = "http://192.168.45.180:3000";
+export const API_BASE_URL = "http://172.16.146.120:3000";
 export const AuthProvider = async() => {
     const { data: { session } } = await supabase.auth.getSession()
     const uuid = session?.user.id

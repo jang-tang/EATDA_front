@@ -1,21 +1,26 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Dimensions,
-    Platform,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
 
-export default function Store_Top() {
+type TopProps = {
+  searchWord: string;
+  setSearchWord: (text: string) => void;
+};
+
+export default function Store_Top({ searchWord, setSearchWord }: TopProps) {
   const [searchMode, setSearchMode] = useState(false);
   const [searchText, setSearchText] = useState('');
 
@@ -28,7 +33,13 @@ export default function Store_Top() {
             <TouchableOpacity
               style={styles.backButton}
               activeOpacity={0.75}
-              onPress={() => setSearchMode(false)}
+              onPress={() => {
+                setSearchMode(false)
+                setSearchWord('')
+                setSearchText('')
+
+              }
+              }
             >
               <Ionicons name="arrow-back" size={24} />
             </TouchableOpacity>
@@ -36,7 +47,10 @@ export default function Store_Top() {
               style={styles.searchInput}
               placeholder="검색어를 입력하세요"
               value={searchText}
-              onChangeText={setSearchText}
+              onChangeText={setSearchText} // 입력할 때는 로컬 state만 바꿈
+              onSubmitEditing={() => {
+                setSearchWord(searchText); // 엔터(완료) 시 상위 state 변경
+              }}
               autoFocus
             />
           </>

@@ -27,10 +27,42 @@ async function Get_user_info(user_id: string) {
   }
 }
 
+async function changeUserName(user_id: string, changedName:string ) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/change_name`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id : user_id,
+        changedName : changedName
+      }),
+    });
+
+    const data = await response.json();
+    return data
+  
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
+}
+
+
 
 export default function Profile() {
   const [nickname, setNickname] = useState<string>('');
+  const [newNickname, setNewNickname] = useState<string>('');
   const [profile_url, setProfileUrl] = useState<string>(' ');
+
+  const handleEdit = async () => {
+    setNickname(newNickname);  // input 값으로 상태 업데이트
+    console.log("수정된 닉네임:", newNickname);
+    const userID = await AuthProvider();
+    const result = await changeUserName(userID, newNickname)
+    console.log("이름 변경 서버 결과 : ", result)
+    // 여기서 서버에 PATCH/PUT 요청 보내면 DB에 저장 가능
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -68,6 +100,8 @@ export default function Profile() {
         <TextInput
           style={styles.input}
           placeholder={nickname}
+          value={newNickname}
+          onChangeText={setNewNickname}
           placeholderTextColor="#999"
         />
 
@@ -79,7 +113,7 @@ export default function Profile() {
 
       {/* 수정하기 버튼 (화면 하단) */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.editButton} activeOpacity={0.9}>
+        <TouchableOpacity style={styles.editButton} activeOpacity={0.9} onPress={()=> handleEdit()}>
           <Text style={styles.editButtonText}>수정하기</Text>
         </TouchableOpacity>
       </View>

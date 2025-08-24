@@ -1,10 +1,17 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Sub_Top from "../sub_TopBar";
 
 export default function Write() {
+  const { store_id, store_name, product_id, product_name } = useLocalSearchParams<{
+    store_id?: string;
+    store_name?: string;
+    product_id?: string;
+    product_name?: string;
+  }>();
+  
   const [rating, setRating] = useState(0); // 실제 평점
   const [content, setContent] = useState("");
   const [showPreview, setShowPreview] = useState(false);
@@ -36,9 +43,9 @@ export default function Write() {
 
       {/* 가게명 + 상품명 */}
       <View style={styles.storeProductContainer}>
-        <Text style={styles.storeName}>솔빛 베이커리</Text>
+        <Text style={styles.storeName}>{store_name}</Text>
         <Ionicons name="chevron-forward" size={16} color="#999" style={{ marginHorizontal: 4 }} />
-        <Text style={styles.productName}>단팥빵</Text>
+        <Text style={styles.productName}>{product_name}</Text>
       </View>
 
       <ScrollView style={styles.container}>
